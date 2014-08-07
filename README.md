@@ -66,6 +66,44 @@ If a tag has been found, the rest of the line plus all subsequent lines are cons
 
 Such release log items consisting of multiple lines are joined into one line. Whitespace at the end or beginning of lines is trimmed to a single space.
 
+## Configuration
+
+In the header of script `generate_release_notes.pl`, the following section can be tweaked to adapt the parsing process to some other tags, if you wish:
+
+    ###########################################
+    # CONFIG START
+    ###########################################
+    
+    # header labels for the sections
+    my %headings = (
+        'NEW' => 'New Features',
+        'FIX' => 'Bugfixes',
+        'CHANGE' => 'Other Changes',
+        'TEXT' => 'Cosmetic Changes',
+    );
+    
+    # define order (and appearance) of sections
+    # you may omit any section here, then it will be 
+    # ignored in the output
+    my @sections = qw/ NEW FIX CHANGE TEXT /;
+    
+    # mapping from log message keywords --> Release log section
+    # The value must be one of the defined. A prefix which is not
+    # listed here will not be recognized by the parser
+    my %sectionMapping = (
+        'NEW' => 'NEW',
+        'FIX' => 'FIX',
+        'CHG' => 'CHANGE',
+        'TXT' => 'TEXT',
+        'FEATURE' => 'NEW',
+        'BUGFIX' => 'FIX',
+        'CHANGE' => 'CHANGE',
+        'TEXT' => 'TEXT',
+    );
+ 
+Thus, you can configure which tags are recognized, into which "sections" of the release log the respective items should go and you can also omit sections by omitting the section code from the array @sections.
+
+The rest should be quite clear from the inline comments.
 
 ## Example
 
