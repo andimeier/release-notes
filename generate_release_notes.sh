@@ -23,6 +23,14 @@
 #
 # Parameters:
 #   RELEASE ... name of release to be analyzed, e.g. "0.1.5"
+#               if name is "HEAD", then it is assumed that the release commit has not been created yet.
+#               In this case the difference between the last release (the first in first-parent history
+#               since the current release has no commit yet) and the head of the "master" branch is
+#               determined.
+#               In other words: git log 
+#   VERSION ... The version number (e.g. "0.1.5"). This parameter is mandatory if RELEASE is "HEAD". 
+#               If RELEASE is not "HEAD", this parameter is ignored because the version number will be 
+#               extracted from the release tag name.
 
 DEBUG=0 # 1 ... additional debug output
 
@@ -32,22 +40,52 @@ if [ "$1" == "" ] ; then
 fi
 
 RELEASE=$1
+VERSION=$2
 RELEASE_TAG=release-$RELEASE
 
-if ! echo $RELEASE | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' >/dev/null ; then
-	echo "ERROR parameter RELEASE must consist solely of the version string, nothing else. E.g.: \"0.1.5\""
-	exit 1
+if [ "$RELEASE" == "HEAD" ] ; then
+	# second parameter VERSION is mandatory when using HEAD
+	if [ "$2" == "" ] ; then
+		echo "ERROR when parameter RELEASE is \"HEAD\", you must specify the VERSION as second parameter"
+		exit 1
+	fi
+else
+	if ! echo $RELEASE | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' >/dev/null ; then
+		echo "ERROR parameter RELEASE must consist solely of the version string, nothing else. E.g.: \"0.1.5\""
+		exit 1
+	fi
 fi
 
-# try to find the release tag
-CHECK_TAG=`git tag -l $RELEASE_TAG`
-if [ "$CHECK_TAG" == "" ] ; then
-	echo "ERROR could not find tag $RELEASE_TAG"
-	exit 1
+if [ $RELEASE == "HEAD" ] ; then
+	# assume there is no commit object yet for the current release. So, the previous release
+	# is simply the current head of the release branch
+	PREVIOUS_RELEASE=`git rev-parse HEAD`
+	
+	# release date = today
+	RELEASE_DATE=`date +%Y-%m-%d`
+	
+	LOG_TO="master"
+	RELEASE_LABEL=$VERSION
+else
+	# assume there is already a release commit (i.e., generate the release notes for 
+	# "old" releases
+
+	# try to find the release tag
+	CHECK_TAG=`git tag -l $RELEASE_TAG`
+	if [ "$CHECK_TAG" == "" ] ; then
+		echo "ERROR could not find tag $RELEASE_TAG"
+		exit 1
+	fi
+
+	PREVIOUS_RELEASE=`git log --format=format:"%H" --first-parent ${RELEASE_TAG} | sed -n -e '2p'`
+	
+	# release date = commit date of release tag
+	RELEASE_DATE=`git log --first-parent --format=format:"%ci" -1 ${RELEASE_TAG} | sed -e 's/ .*$//g'`
+
+	LOG_TO=`git rev-parse $RELEASE_TAG`
+	RELEASE_LABEL=$RELEASE
 fi
 
-PREVIOUS_RELEASE=`git log --format=format:"%H" --first-parent ${RELEASE_TAG} | sed -n -e '2p'`
-RELEASE_DATE=`git log --first-parent --format=format:"%ci" -1 ${RELEASE_TAG} | sed -e 's/ .*$//g'`
 
 # check if a valid SHA1 hash has been determined for the previous release
 if ! echo $PREVIOUS_RELEASE | grep -E '^[0-9a-f]{40}$' >/dev/null ; then
@@ -64,4 +102,4 @@ if [ "$DEBUG" == "1" ] ; then
 	echo "-----------------------------------------------------------------------"
 fi
 
-git --no-pager log --format=raw ${PREVIOUS_RELEASE}..${RELEASE_TAG} | `dirname $0`/generate_release_notes.pl $RELEASE $RELEASE_DATE
+git --no-pager log --format=raw ${PREVIOUS_RELEASE}..${LOG_TO} | `dirname $0`/generate_release_notes.pl $RELEASE_LABEL $RELEASE_DATE
