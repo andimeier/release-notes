@@ -1,0 +1,44 @@
+commit 17af183515a0ea08855e7614ac2bfb47d91e2695
+tree e8704969a853f61935356dfc9ca75ab389e7b5a6
+parent 533b50809f8b69eea95f07bbaa184b3fe1089381
+author Alexander Eck-Zimmer <alexander.eck-zimmer@siemens.com> 1407308548 +0200
+committer Alexander Eck-Zimmer <alexander.eck-zimmer@siemens.com> 1407308548 +0200
+
+    Nothing special.
+    
+    Nothing at all.
+
+commit 533b50809f8b69eea95f07bbaa184b3fe1089381
+tree f167e8c946d4dc5b9c34063fe4beb947123868f5
+parent 76f8c25043b4c7920593fc7d7cefe8fd8a03de1f
+author Alexander Eck-Zimmer <alexander.eck-zimmer@siemens.com> 1407308456 +0200
+committer Alexander Eck-Zimmer <alexander.eck-zimmer@siemens.com> 1407308456 +0200
+
+    Some useful things:
+    
+    - NEW new feature "XZ"
+    
+    - FIX fixes issue #3
+    
+    - CHG refactoring bla bal asdfertio asklj asjkl sg;kljweqrtioaj sgjklad
+      f;gkljeoritgja s;glkja eorigj a;lkgja;lsdfjkg a;ldkjfg aoeijrg a;ldfjkg
+      a;ldjgrioearjg a;dlfg. There is much more to say about this fantastic 
+	  but there is not sufficient space to do so. Thus said, this is the end 
+	  of the change description.
+    
+    - NEW another feature B
+
+commit 76f8c25043b4c7920593fc7d7cefe8fd8a03de1f
+tree 01f2fe8dd174b94974152d806056ebf877ce3ebf
+author Alexander Eck-Zimmer <alexander.eck-zimmer@siemens.com> 1407308428 +0200
+committer Alexander Eck-Zimmer <alexander.eck-zimmer@siemens.com> 1407308428 +0200
+
+    NEW new date file
+
+	TEXT replaced all "Exception" by "Event"
+	
+	This is not a NEW line
+	
+	FIX fixes issue #asdfsafd
+	
+	
